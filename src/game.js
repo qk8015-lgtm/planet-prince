@@ -61,21 +61,21 @@ app.stage.addChild(ball);
 export const auraLayer = new Container();
 app.stage.addChild(auraLayer);
 
-// -----------------------------
-// 給第二週的人：光暈資料格式
-// -----------------------------
-export function createAura() {
-  return {
-    sprite: null,
-    x: 0,
-    y: 0,
-    vx: 0,
-    vy: 0,
-    score: 10,
-    isFake: false,
-    active: false, 
-  };
-}
+// [新增] 第二週：變數與 UI
+let auras = [];     // 存放場上的光暈物件
+let spawnTimer = 0; // 生成計時器
+let score = 0;      // 分數
+
+const scoreStyle = new TextStyle({
+    fontFamily: 'Arial',
+    fontSize: 36,
+    fill: '#ffffff',
+    fontWeight: 'bold',
+});
+const scoreText = new Text({ text: 'Score: 0', style: scoreStyle });
+scoreText.x = 20;
+scoreText.y = 20;
+app.stage.addChild(scoreText);
 
 // -----------------------------
 // 鍵盤控制左右切軌
@@ -109,21 +109,56 @@ function lerp(a, b, t) {
 app.ticker.add(update);
 
 function update() {
-  // 1. 光球自動往上移動
-  ball.y -= 2;
-
-  // 循環回到底部
-  if (ball.y < -30) {
-    ball.y = app.screen.height + 30;
-  }
-
-  // 2. 平滑切軌
+  // 1. 平滑切軌
   const targetX = lanes[currentLane];
   ball.x = lerp(ball.x, targetX, 0.1);
 
-  // 3. 光球輕微呼吸（視覺＋生命感）
+  // 2. 光球輕微呼吸（視覺＋生命感）
   glow.scale.x = 1 + Math.sin(performance.now() / 500) * 0.05;
   glow.scale.y = glow.scale.x;
+
+  // -----------------------------
+  // [新增] 第二週邏輯：光暈生成與碰撞
+  // -----------------------------
+  
+  // A. 生成邏輯 (每 60 frame 一次)
+  spawnTimer++;
+  if (spawnTimer > 60) {
+      spawnNewAura();
+      spawnTimer = 0;
+  }
+
+  // B. 更新光暈位置與碰撞
+  for (let i = auras.length - 1; i >= 0; i--) {
+      const aura = auras[i];
+      aura.update(); // 讓光暈往下跑
+
+      // 碰撞判定：同軌道&&距離夠近
+      const distY = Math.abs(aura.view.y - ball.y);
+      if (aura.active && aura.lane === currentLane && distY < 50) {
+          // 吃到了
+          aura.active = false;
+          score += 10;
+          scoreText.text = "Score: " + score;
+          console.log("Score!", score);
+      }
+
+      // 移除失效物件
+      if (!aura.active) {
+          auraLayer.removeChild(aura.view);
+          auras.splice(i, 1);
+      }
+  }
+}
+
+// [新增] 輔助函式：生成光暈
+function spawnNewAura() {
+    const laneIndex = Math.floor(Math.random() * 3);
+    const x = lanes[laneIndex];
+    const aura = new Aura(x, laneIndex);
+    
+    auraLayer.addChild(aura.view); 
+    auras.push(aura);
 }
 
 import { lanes, currentLane, setLane } from "./core/lane.js";

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>Planet Prince 3D - Sky Style</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000; /* 預防加載時白屏 */
+    }
+    #score-ui {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      pointer-events: none;
+      text-shadow: 0 0 10px #ffcc00;
+    }
+    h1 { margin: 0; font-size: 24px; }
+    p { margin: 5px 0; font-size: 18px; color: #ffe08a; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+  
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<div id="start-overlay"
+     style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.2);  /* 半透明灰色遮罩 */
+        backdrop-filter: blur(4px);     /* 可選：淡淡模糊效果 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 28px;
+        letter-spacing: 2px;
+        z-index: 9999;
+        user-select: none;
+     ">
+    <div style="text-align:center;">
+        LEVEL:1<br><br>
+        按 Enter 開始遊戲<br>
+        鍵盤 1、2、3 切換關卡
+    </div>
+</div>
+<div id="gameover-overlay"
+     style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.2);
+        backdrop-filter: blur(4px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 32px;
+        letter-spacing: 2px;
+        z-index: 9999;
+        user-select: none;
+     ">
+    <div style="text-align:center;">
+        遊戲結束<br><br>
+        按 Enter 重新開始<br>
+        按 1 / 2 / 3 切換關卡
+    </div>
+</div>
+<div id="level-overlay"
+     style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(4px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 32px;
+        letter-spacing: 2px;
+        z-index: 9998;
+        user-select: none;
+     ">
+    <div id="level-text" style="text-align:center;"></div>
+    <div style="margin-top: 20px; font-size: 22px;">
+        按 Enter 開始
+    </div>
+</div>
+
+<body>
+
+<div id="score-ui">
+  <h1 id="score-text">Score: 0</h1>
+  <p id="combo-text">Combo x0</p>
+</div>
+
+<script type="module">
+  import "./game.js";
+</script>
+
+</body>
+</html>

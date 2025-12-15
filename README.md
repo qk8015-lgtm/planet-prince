@@ -1,2 +1,2 @@
-# planet-prince
+# lightbound光之羈絆
 
